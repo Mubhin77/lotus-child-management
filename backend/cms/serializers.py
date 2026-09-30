@@ -103,17 +103,63 @@ class ActivitySerializer(serializers.ModelSerializer):
 
 
 # class DailyReportSerializer(serializers.ModelSerializer):
+#     child_name = serializers.SerializerMethodField()
+#     teacher_name = serializers.SerializerMethodField()
+#     classroom_name = serializers.SerializerMethodField()
+#     activity_names = serializers.SerializerMethodField()
+#     teacher = serializers.PrimaryKeyRelatedField(read_only=True)
+#     # child = serializers.PrimaryKeyRelatedField(read_only=True)
+
 #     class Meta:
 #         model = DailyReport
-#         fields = "__all__"
+#         fields = [
+#             "id",
+#             "child",
+#             "child_name",
+#             "teacher",
+#             "teacher_name",
+#             "classroom_name",
+#             "report_date",
+#             "attendance_present",
+#             "arrival_time",
+#             "departure_time",
+#             "mood",
+#             "morning_snack",
+#             "lunch",
+#             "rest_status",
+#             "rest_start",
+#             "rest_end",
+#             "participation",
+#             "teacher_observation",
+#             "activities",
+#             "activity_names",
+#             "submitted",
+#             "created_at",
+#             "updated_at",
+#         ]
+
+#     def get_child_name(self, obj):
+#         return str(obj.child)
+
+#     def get_teacher_name(self, obj):
+#         return str(obj.teacher)
+
+#     def get_classroom_name(self, obj):
+#         if obj.child.classroom:
+#             return obj.child.classroom.name
+#         return ""
+
+#     def get_activity_names(self, obj):
+#         return list(
+#             obj.activities.values_list("name", flat=True)
+#         )
 
 class DailyReportSerializer(serializers.ModelSerializer):
+    teacher = serializers.PrimaryKeyRelatedField(read_only=True)
     child_name = serializers.SerializerMethodField()
     teacher_name = serializers.SerializerMethodField()
     classroom_name = serializers.SerializerMethodField()
     activity_names = serializers.SerializerMethodField()
-    teacher = serializers.PrimaryKeyRelatedField(
-        read_only=True)
 
     class Meta:
         model = DailyReport
@@ -155,9 +201,20 @@ class DailyReportSerializer(serializers.ModelSerializer):
         return ""
 
     def get_activity_names(self, obj):
-        return list(
-            obj.activities.values_list("name", flat=True)
-        )
+        return list(obj.activities.values_list("name", flat=True))
+
+    def validate(self, attrs):
+        """
+        Prevent changing the child when updating an existing report.
+        """
+        if self.instance and "child" in attrs:
+            if attrs["child"].id != self.instance.child.id:
+                from rest_framework.exceptions import ValidationError
+                raise ValidationError({
+                    "child": "The child cannot be changed after a report is created."
+                })
+
+        return attrs
 
 class NoticeSerializer(serializers.ModelSerializer):
     class Meta:

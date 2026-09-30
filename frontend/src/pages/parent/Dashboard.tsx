@@ -32,8 +32,9 @@ interface Notice {
 }
 
 export default function ParentDashboard() {
-  const [child, setChild] = useState<Child | null>(null);
-  const [todayReport, setTodayReport] = useState<DailyReport | null>(null);
+  const [children, setChildren] = useState<Child[]>([]);
+  const [selectedChildId, setSelectedChildId] = useState<number | null>(null);
+  const [todayReports, setTodayReports] = useState<DailyReport[]>([]);
   const [notices, setNotices] = useState<Notice[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -49,15 +50,16 @@ export default function ParentDashboard() {
             api.get("/notices/"),
           ]);
 
-        const children = childrenResponse.data;
+        const childrenData: Child[] = childrenResponse.data;
+        const reportsData: DailyReport[] = reportsResponse.data;
 
-        setChild(children.length > 0 ? children[0] : null);
-
-        const reports = reportsResponse.data;
-
-        setTodayReport(reports.length > 0 ? reports[0] : null);
-
+        setChildren(childrenData);
+        setTodayReports(reportsData);
         setNotices(noticesResponse.data.slice(0, 3));
+
+        if (childrenData.length > 0) {
+          setSelectedChildId(childrenData[0].id);
+        }
       } catch (error) {
         console.error("Failed to load parent dashboard:", error);
       } finally {
@@ -67,6 +69,12 @@ export default function ParentDashboard() {
 
     loadDashboard();
   }, [today]);
+
+  const selectedChild =
+    children.find((child) => child.id === selectedChildId) || null;
+
+  const todayReport =
+    todayReports.find((report) => report.child === selectedChildId) || null;
 
   if (loading) {
     return (
@@ -87,24 +95,50 @@ export default function ParentDashboard() {
         </p>
       </div>
 
-      {/* Child Summary */}
-      {child ? (
+      {/* Child Selector */}
+      {children.length > 0 ? (
         <div className="bg-white rounded-2xl border border-pink-100 shadow-sm p-6 mb-6">
-          <div className="flex items-center gap-5">
-            <div className="w-16 h-16 rounded-full bg-pink-100 flex items-center justify-center text-2xl">
-              👧
-            </div>
-
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h2 className="text-xl font-bold text-gray-800">
-                {child.first_name} {child.last_name}
-              </h2>
+              <h2 className="text-lg font-bold text-gray-800">My Children</h2>
 
-              <p className="text-gray-500 mt-1">
-                Roll No: {child.roll_number || "Not assigned"}
+              <p className="text-sm text-gray-500 mt-1">
+                Select a child to view today's information.
               </p>
             </div>
+
+            {children.length > 1 && (
+              <select
+                value={selectedChildId ?? ""}
+                onChange={(e) => setSelectedChildId(Number(e.target.value))}
+                className="rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-pink-500"
+              >
+                {children.map((child) => (
+                  <option key={child.id} value={child.id}>
+                    {child.first_name} {child.last_name}
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
+
+          {selectedChild && (
+            <div className="flex items-center gap-5 mt-6">
+              <div className="w-16 h-16 rounded-full bg-pink-100 flex items-center justify-center text-2xl">
+                👧
+              </div>
+
+              <div>
+                <h2 className="text-xl font-bold text-gray-800">
+                  {selectedChild.first_name} {selectedChild.last_name}
+                </h2>
+
+                <p className="text-gray-500 mt-1">
+                  Roll No: {selectedChild.roll_number || "Not assigned"}
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       ) : (
         <div className="bg-white rounded-2xl border border-pink-100 p-6 mb-6">
@@ -115,50 +149,50 @@ export default function ParentDashboard() {
       )}
 
       {/* Today's Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
-        <div className="bg-white rounded-2xl border border-pink-100 p-6">
-          <p className="text-sm text-gray-500">Today's Attendance</p>
+      {selectedChild && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
+          <div className="bg-white rounded-2xl border border-pink-100 p-6">
+            <p className="text-sm text-gray-500">Today's Attendance</p>
 
-          <p className="text-2xl font-bold text-gray-800 mt-2">
-            {todayReport
-              ? todayReport.attendance_present
-                ? "Present"
-                : "Absent"
-              : "Not Recorded"}
-          </p>
+            <p className="text-2xl font-bold text-gray-800 mt-2">
+              {todayReport
+                ? todayReport.attendance_present
+                  ? "Present"
+                  : "Absent"
+                : "Not Recorded"}
+            </p>
+          </div>
+
+          <div className="bg-white rounded-2xl border border-pink-100 p-6">
+            <p className="text-sm text-gray-500">Today's Mood</p>
+
+            <p className="text-2xl font-bold text-gray-800 mt-2 capitalize">
+              {todayReport?.mood || "Not Recorded"}
+            </p>
+          </div>
+
+          <div className="bg-white rounded-2xl border border-pink-100 p-6">
+            <p className="text-sm text-gray-500">Report Status</p>
+
+            <p className="text-2xl font-bold text-gray-800 mt-2">
+              {todayReport
+                ? todayReport.submitted
+                  ? "Submitted"
+                  : "Draft"
+                : "Pending"}
+            </p>
+          </div>
         </div>
-
-        <div className="bg-white rounded-2xl border border-pink-100 p-6">
-          <p className="text-sm text-gray-500">Today's Mood</p>
-
-          <p className="text-2xl font-bold text-gray-800 mt-2 capitalize">
-            {todayReport?.mood || "Not Recorded"}
-          </p>
-        </div>
-
-        <div className="bg-white rounded-2xl border border-pink-100 p-6">
-          <p className="text-sm text-gray-500">Report Status</p>
-
-          <p className="text-2xl font-bold text-gray-800 mt-2">
-            {todayReport
-              ? todayReport.submitted
-                ? "Submitted"
-                : "Draft"
-              : "Pending"}
-          </p>
-        </div>
-      </div>
+      )}
 
       {/* Recent Notices */}
       <div className="bg-white rounded-2xl border border-pink-100 p-6">
-        <div className="flex justify-between items-center mb-5">
-          <div>
-            <h2 className="text-xl font-bold text-gray-800">Recent Notices</h2>
+        <div className="mb-5">
+          <h2 className="text-xl font-bold text-gray-800">Recent Notices</h2>
 
-            <p className="text-sm text-gray-500 mt-1">
-              Important updates from Lotus Montessori
-            </p>
-          </div>
+          <p className="text-sm text-gray-500 mt-1">
+            Important updates from Lotus Montessori
+          </p>
         </div>
 
         {notices.length === 0 ? (

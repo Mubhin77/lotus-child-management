@@ -1,6 +1,13 @@
 import { useEffect, useState } from "react";
 import api from "../../services/api";
 
+interface Child {
+  id: number;
+  first_name: string;
+  last_name: string;
+  roll_number: string;
+}
+
 interface DailyReport {
   id: number;
   child: number;
@@ -31,16 +38,32 @@ interface DailyReport {
 }
 
 export default function ParentReports() {
+  const [children, setChildren] = useState<Child[]>([]);
+  const [selectedChildId, setSelectedChildId] = useState<number | null>(null);
+
   const [reports, setReports] = useState<DailyReport[]>([]);
   const [loading, setLoading] = useState(true);
+
   const [selectedReport, setSelectedReport] =
     useState<DailyReport | null>(null);
 
   useEffect(() => {
-    const loadReports = async () => {
+    const loadData = async () => {
       try {
-        const response = await api.get("/daily-reports/");
-        setReports(response.data);
+        const [childrenResponse, reportsResponse] = await Promise.all([
+          api.get("/children/"),
+          api.get("/daily-reports/"),
+        ]);
+
+        const childrenData: Child[] = childrenResponse.data;
+        const reportsData: DailyReport[] = reportsResponse.data;
+
+        setChildren(childrenData);
+        setReports(reportsData);
+
+        if (childrenData.length > 0) {
+          setSelectedChildId(childrenData[0].id);
+        }
       } catch (error) {
         console.error("Failed to load daily reports:", error);
       } finally {
@@ -48,22 +71,26 @@ export default function ParentReports() {
       }
     };
 
-    loadReports();
+    loadData();
   }, []);
+
+  const selectedChild =
+    children.find((child) => child.id === selectedChildId) || null;
+
+  const filteredReports = reports.filter(
+    (report) => report.child === selectedChildId
+  );
 
   if (loading) {
     return (
       <div className="p-8">
-        <p className="text-gray-500">
-          Loading daily reports...
-        </p>
+        <p className="text-gray-500">Loading daily reports...</p>
       </div>
     );
   }
 
   return (
     <div className="p-8">
-
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-800">
@@ -75,20 +102,75 @@ export default function ParentReports() {
         </p>
       </div>
 
+      {/* Child Selector */}
+      {children.length > 0 && (
+        <div className="bg-white rounded-2xl border border-pink-100 shadow-sm p-6 mb-6">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <h2 className="text-lg font-bold text-gray-800">
+                Select Child
+              </h2>
+
+              <p className="text-sm text-gray-500 mt-1">
+                Choose a child to view their daily reports.
+              </p>
+            </div>
+
+            {children.length > 1 && (
+              <select
+                value={selectedChildId ?? ""}
+                onChange={(e) =>
+                  setSelectedChildId(Number(e.target.value))
+                }
+                className="rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-pink-500"
+              >
+                {children.map((child) => (
+                  <option key={child.id} value={child.id}>
+                    {child.first_name} {child.last_name}
+                  </option>
+                ))}
+              </select>
+            )}
+          </div>
+
+          {selectedChild && (
+            <div className="mt-5 flex items-center gap-4">
+              <div className="w-12 h-12 rounded-full bg-pink-100 flex items-center justify-center text-xl">
+                👧
+              </div>
+
+              <div>
+                <p className="font-semibold text-gray-800">
+                  {selectedChild.first_name} {selectedChild.last_name}
+                </p>
+
+                <p className="text-sm text-gray-500">
+                  Roll No: {selectedChild.roll_number || "Not assigned"}
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Reports */}
       <div className="bg-white rounded-2xl border border-pink-100 shadow-sm overflow-hidden">
-
-        {reports.length === 0 ? (
+        {children.length === 0 ? (
           <div className="p-8 text-center">
             <p className="text-gray-500">
-              No daily reports are available yet.
+              No child has been assigned to your account yet.
+            </p>
+          </div>
+        ) : filteredReports.length === 0 ? (
+          <div className="p-8 text-center">
+            <p className="text-gray-500">
+              No daily reports are available for{" "}
+              {selectedChild?.first_name || "this child"} yet.
             </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
-
             <table className="w-full">
-
               <thead className="bg-pink-50 border-b border-pink-100">
                 <tr>
                   <th className="text-left px-6 py-4 text-sm font-semibold text-gray-700">
@@ -114,13 +196,11 @@ export default function ParentReports() {
               </thead>
 
               <tbody className="divide-y divide-gray-100">
-
-                {reports.map((report) => (
+                {filteredReports.map((report) => (
                   <tr
                     key={report.id}
                     className="hover:bg-pink-50/50 transition"
                   >
-
                     <td className="px-6 py-4 text-gray-800">
                       {report.report_date}
                     </td>
@@ -149,42 +229,34 @@ export default function ParentReports() {
 
                     <td className="px-6 py-4 text-right">
                       <button
-                        onClick={() =>
-                          setSelectedReport(report)
-                        }
+                        onClick={() => setSelectedReport(report)}
                         className="px-4 py-2 rounded-lg bg-pink-100 text-pink-700 font-medium hover:bg-pink-200 transition"
                       >
                         View
                       </button>
                     </td>
-
                   </tr>
                 ))}
-
               </tbody>
-
             </table>
-
           </div>
         )}
-
       </div>
 
       {/* Report Details Modal */}
       {selectedReport && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
-
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
 
             {/* Modal Header */}
             <div className="px-6 py-5 border-b border-gray-100 flex justify-between items-center">
-
               <div>
                 <h2 className="text-xl font-bold text-gray-800">
                   Daily Report
                 </h2>
 
                 <p className="text-sm text-gray-500 mt-1">
+                  {selectedReport.child_name} ·{" "}
                   {selectedReport.report_date}
                 </p>
               </div>
@@ -195,7 +267,6 @@ export default function ParentReports() {
               >
                 ×
               </button>
-
             </div>
 
             {/* Modal Content */}
@@ -203,11 +274,8 @@ export default function ParentReports() {
 
               {/* Child / Teacher */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-
                 <div>
-                  <p className="text-sm text-gray-500">
-                    Child
-                  </p>
+                  <p className="text-sm text-gray-500">Child</p>
 
                   <p className="font-semibold text-gray-800 mt-1">
                     {selectedReport.child_name}
@@ -215,30 +283,23 @@ export default function ParentReports() {
                 </div>
 
                 <div>
-                  <p className="text-sm text-gray-500">
-                    Teacher
-                  </p>
+                  <p className="text-sm text-gray-500">Teacher</p>
 
                   <p className="font-semibold text-gray-800 mt-1">
                     {selectedReport.teacher_name}
                   </p>
                 </div>
-
               </div>
 
               {/* Attendance */}
               <div className="border-t pt-5">
-
                 <h3 className="font-semibold text-gray-800 mb-4">
                   Attendance
                 </h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-
                   <div>
-                    <p className="text-sm text-gray-500">
-                      Status
-                    </p>
+                    <p className="text-sm text-gray-500">Status</p>
 
                     <p className="font-semibold mt-1">
                       {selectedReport.attendance_present
@@ -248,9 +309,7 @@ export default function ParentReports() {
                   </div>
 
                   <div>
-                    <p className="text-sm text-gray-500">
-                      Arrival
-                    </p>
+                    <p className="text-sm text-gray-500">Arrival</p>
 
                     <p className="font-semibold mt-1">
                       {selectedReport.arrival_time ||
@@ -259,37 +318,28 @@ export default function ParentReports() {
                   </div>
 
                   <div>
-                    <p className="text-sm text-gray-500">
-                      Departure
-                    </p>
+                    <p className="text-sm text-gray-500">Departure</p>
 
                     <p className="font-semibold mt-1">
                       {selectedReport.departure_time ||
                         "Not recorded"}
                     </p>
                   </div>
-
                 </div>
-
               </div>
 
               {/* Mood & Participation */}
               <div className="border-t pt-5">
-
                 <h3 className="font-semibold text-gray-800 mb-4">
                   Child's Day
                 </h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-
                   <div>
-                    <p className="text-sm text-gray-500">
-                      Mood
-                    </p>
+                    <p className="text-sm text-gray-500">Mood</p>
 
                     <p className="font-semibold mt-1 capitalize">
-                      {selectedReport.mood ||
-                        "Not recorded"}
+                      {selectedReport.mood || "Not recorded"}
                     </p>
                   </div>
 
@@ -303,20 +353,16 @@ export default function ParentReports() {
                         "Not recorded"}
                     </p>
                   </div>
-
                 </div>
-
               </div>
 
               {/* Meals */}
               <div className="border-t pt-5">
-
                 <h3 className="font-semibold text-gray-800 mb-4">
                   Meals
                 </h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-
                   <div>
                     <p className="text-sm text-gray-500">
                       Morning Snack
@@ -338,24 +384,18 @@ export default function ParentReports() {
                         "Not recorded"}
                     </p>
                   </div>
-
                 </div>
-
               </div>
 
               {/* Rest */}
               <div className="border-t pt-5">
-
                 <h3 className="font-semibold text-gray-800 mb-4">
                   Rest / Sleep
                 </h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-
                   <div>
-                    <p className="text-sm text-gray-500">
-                      Status
-                    </p>
+                    <p className="text-sm text-gray-500">Status</p>
 
                     <p className="font-semibold mt-1 capitalize">
                       {selectedReport.rest_status ||
@@ -364,9 +404,7 @@ export default function ParentReports() {
                   </div>
 
                   <div>
-                    <p className="text-sm text-gray-500">
-                      Start
-                    </p>
+                    <p className="text-sm text-gray-500">Start</p>
 
                     <p className="font-semibold mt-1">
                       {selectedReport.rest_start ||
@@ -375,23 +413,18 @@ export default function ParentReports() {
                   </div>
 
                   <div>
-                    <p className="text-sm text-gray-500">
-                      End
-                    </p>
+                    <p className="text-sm text-gray-500">End</p>
 
                     <p className="font-semibold mt-1">
                       {selectedReport.rest_end ||
                         "Not recorded"}
                     </p>
                   </div>
-
                 </div>
-
               </div>
 
               {/* Activities */}
               <div className="border-t pt-5">
-
                 <h3 className="font-semibold text-gray-800 mb-4">
                   Activities
                 </h3>
@@ -402,7 +435,6 @@ export default function ParentReports() {
                   </p>
                 ) : (
                   <div className="flex flex-wrap gap-2">
-
                     {selectedReport.activity_names.map(
                       (activity) => (
                         <span
@@ -413,15 +445,12 @@ export default function ParentReports() {
                         </span>
                       )
                     )}
-
                   </div>
                 )}
-
               </div>
 
               {/* Teacher Observation */}
               <div className="border-t pt-5">
-
                 <h3 className="font-semibold text-gray-800 mb-4">
                   Teacher's Observation
                 </h3>
@@ -430,28 +459,22 @@ export default function ParentReports() {
                   {selectedReport.teacher_observation ||
                     "No observation recorded."}
                 </div>
-
               </div>
-
             </div>
 
             {/* Close */}
             <div className="px-6 py-4 border-t border-gray-100 flex justify-end">
-
               <button
                 onClick={() => setSelectedReport(null)}
                 className="px-5 py-2.5 rounded-lg bg-pink-600 text-white hover:bg-pink-700 transition"
               >
                 Close
               </button>
-
             </div>
 
           </div>
-
         </div>
       )}
-
     </div>
   );
 }
