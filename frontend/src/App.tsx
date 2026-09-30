@@ -11,7 +11,7 @@ import Parents from "./pages/admin/Parents";
 import Classes from "./pages/admin/Classes";
 import DailyReports from "./pages/admin/DailyReports";
 import AdminNotices from "./pages/admin/Notices";
-
+import Activities from "./pages/admin/Activities";
 // Teacher
 import TeacherDashboard from "./pages/teacher/Dashboard";
 import TeacherDailyReport from "./pages/teacher/DailyReport";
@@ -69,6 +69,8 @@ function App() {
           <Route path="reports" element={<DailyReports />} />
 
           <Route path="notices" element={<AdminNotices />} />
+
+          <Route path="activities" element={<Activities />} />
         </Route>
 
         {/* ==================== */}
