@@ -188,21 +188,33 @@ class ChildViewSet(viewsets.ModelViewSet):
 
         return Child.objects.none()
 
-# class ActivityViewSet(viewsets.ModelViewSet):
-#     queryset = Activity.objects.all()
-#     serializer_class = ActivitySerializer
-#     # permission_classes = [IsAuthenticated]
-#     permission_classes = [IsAdminOnly]
 
 class ActivityViewSet(viewsets.ModelViewSet):
     queryset = Activity.objects.all()
     serializer_class = ActivitySerializer
 
     def get_permissions(self):
-        if self.action in ["create", "update", "partial_update", "destroy"]:
+        if self.action in [
+            "create",
+            "update",
+            "partial_update",
+            "destroy",
+        ]:
             return [IsAdminOnly()]
 
         return [IsAuthenticated()]
+
+    def get_queryset(self):
+        user = self.request.user
+
+        # Admin can see all activities
+        if user.is_staff:
+            return Activity.objects.all()
+
+        # Teachers and parents can only see active activities
+        return Activity.objects.filter(
+            is_active=True
+        )
 
 class DailyReportViewSet(viewsets.ModelViewSet):
     serializer_class = DailyReportSerializer
