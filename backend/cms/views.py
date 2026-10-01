@@ -31,11 +31,6 @@ from .serializers import (
     NoticeSerializer,
 )
 
-
-# class TeacherViewSet(viewsets.ModelViewSet):
-#     queryset = Teacher.objects.all()
-#     serializer_class = TeacherSerializer
-#     permission_classes = [IsAuthenticated]
 class TeacherViewSet(viewsets.ModelViewSet):
     queryset = Teacher.objects.all()
     serializer_class = TeacherSerializer
@@ -94,11 +89,6 @@ class TeacherViewSet(viewsets.ModelViewSet):
             serializer.data,
             status=status.HTTP_201_CREATED
         )
-
-# class ParentViewSet(viewsets.ModelViewSet):
-#     queryset = Parent.objects.all()
-#     serializer_class = ParentSerializer
-#     permission_classes = [IsAuthenticated]
 
 class ParentViewSet(viewsets.ModelViewSet):
     queryset = Parent.objects.all()
@@ -168,38 +158,7 @@ class ClassRoomViewSet(viewsets.ModelViewSet):
     serializer_class = ClassRoomSerializer
     permission_classes = [IsAdminOnly]
 
-# class ChildViewSet(viewsets.ModelViewSet):
-#     queryset = Child.objects.all()
-#     serializer_class = ChildSerializer
-#     permission_classes = [IsAuthenticated]
 
-# class ChildViewSet(viewsets.ModelViewSet):
-#     serializer_class = ChildSerializer
-#     permission_classes = [IsAuthenticated]
-
-#     def get_queryset(self):
-#         user = self.request.user
-
-#         # Admin can see all children
-#         if user.is_staff:
-#             return Child.objects.all()
-
-#         # Teacher can see children in their assigned classes
-#         if hasattr(user, "teacher"):
-#             return Child.objects.filter(
-#                 classroom__teachers=user.teacher,
-#                 is_active=True
-#             ).distinct()
-
-#         # Parent can see only their own children
-#         if hasattr(user, "parent"):
-#             return Child.objects.filter(
-#                 parents=user.parent,
-#                 is_active=True
-#             ).distinct()
-
-#         # Any other authenticated user sees nothing
-#         return Child.objects.none()
 class ChildViewSet(viewsets.ModelViewSet):
     serializer_class = ChildSerializer
 
@@ -244,140 +203,6 @@ class ActivityViewSet(viewsets.ModelViewSet):
             return [IsAdminOnly()]
 
         return [IsAuthenticated()]
-
-
-
-# class DailyReportViewSet(viewsets.ModelViewSet):
-#     serializer_class = DailyReportSerializer
-#     permission_classes = [IsAuthenticatedOrReadOnlyParent]
-    
-#     def get_queryset(self):
-#         user = self.request.user
-
-#         if user.is_staff:
-#             queryset = DailyReport.objects.all()
-
-#         elif hasattr(user, "teacher"):
-#             queryset = DailyReport.objects.filter(
-#                 child__classroom__teachers=user.teacher
-#             ).distinct()
-
-#         elif hasattr(user, "parent"):
-#             queryset = DailyReport.objects.filter(
-#                 child__parents=user.parent
-#             ).distinct()
-
-#         else:
-#             queryset = DailyReport.objects.none()
-
-#         # Optional filters
-#         report_date = self.request.query_params.get("date")
-#         classroom = self.request.query_params.get("classroom")
-#         submitted = self.request.query_params.get("submitted")
-#         search = self.request.query_params.get("search")
-
-#         if report_date:
-#             queryset = queryset.filter(report_date=report_date)
-
-#         if classroom:
-#             queryset = queryset.filter(
-#                 child__classroom_id=classroom
-#             )
-
-#         if submitted in ["true", "false"]:
-#             queryset = queryset.filter(
-#                 submitted=submitted == "true"
-#             )
-
-#         if search:
-#             queryset = queryset.filter(
-#                 Q(child__first_name__icontains=search)
-#                 | Q(child__last_name__icontains=search)
-#             )
-
-#         return queryset
-#     def perform_create(self, serializer):
-#         user = self.request.user
-
-#         if user.is_staff:
-#             serializer.save()
-#             return
-
-#         if hasattr(user, "teacher"):
-#             child = serializer.validated_data["child"]
-
-#             if not child.classroom or not child.classroom.teachers.filter(
-#                 id=user.teacher.id
-#             ).exists():
-#                 from rest_framework.exceptions import PermissionDenied
-
-#                 raise PermissionDenied(
-#                     "You are not allowed to create a report for this child."
-#                 )
-
-#             serializer.save(teacher=user.teacher)
-#             return
-
-#         from rest_framework.exceptions import PermissionDenied
-
-#         raise PermissionDenied(
-#             "Parents are not allowed to create daily reports."
-#         )
-
-#     def perform_update(self, serializer):
-#         user = self.request.user
-
-#         if user.is_staff:
-#             serializer.save()
-#             return
-
-#         if hasattr(user, "teacher"):
-#             report = self.get_object()
-
-#             if not report.child.classroom or not report.child.classroom.teachers.filter(
-#                 id=user.teacher.id
-#             ).exists():
-#                 from rest_framework.exceptions import PermissionDenied
-
-#                 raise PermissionDenied(
-#                     "You are not allowed to update this report."
-#                 )
-
-#             serializer.save(teacher=user.teacher)
-#             return
-
-#         from rest_framework.exceptions import PermissionDenied
-
-#         raise PermissionDenied(
-#             "Parents are not allowed to update daily reports."
-#         )
-
-
-# def perform_destroy(self, instance):
-#     user = self.request.user
-
-#     if user.is_staff:
-#         instance.delete()
-#         return
-
-#     if hasattr(user, "teacher"):
-#         if not instance.child.classroom or not instance.child.classroom.teachers.filter(
-#             id=user.teacher.id
-#         ).exists():
-#             from rest_framework.exceptions import PermissionDenied
-
-#             raise PermissionDenied(
-#                 "You are not allowed to delete this report."
-#             )
-
-#         instance.delete()
-#         return
-
-#     from rest_framework.exceptions import PermissionDenied
-
-#     raise PermissionDenied(
-#         "Parents are not allowed to delete daily reports."
-#     )
 
 class DailyReportViewSet(viewsets.ModelViewSet):
     serializer_class = DailyReportSerializer
@@ -558,104 +383,33 @@ def current_user(request):
         "role": role,
     })
 
-# class NoticeViewSet(viewsets.ModelViewSet):
-#     serializer_class = NoticeSerializer
-#     permission_classes = [IsAuthenticated]
-
-#     def get_queryset(self):
-#         user = self.request.user
-
-#         if user.is_staff:
-#             return Notice.objects.all().order_by(
-#                 "-notice_date",
-#                 "-created_at"
-#             )
-
-#         return Notice.objects.filter(
-#             is_active=True
-#         ).order_by(
-#             "-notice_date",
-#             "-created_at"
-#         )
-
-#     def perform_create(self, serializer):
-#         if not self.request.user.is_staff:
-#             from rest_framework.exceptions import PermissionDenied
-
-#             raise PermissionDenied(
-#                 "Only administrators can create notices."
-#             )
-
-#         serializer.save()
-
-#     def perform_update(self, serializer):
-#         if not self.request.user.is_staff:
-#             from rest_framework.exceptions import PermissionDenied
-
-#             raise PermissionDenied(
-#                 "Only administrators can update notices."
-#             )
-
-#         serializer.save()
-
-#     def perform_destroy(self, instance):
-#         if not self.request.user.is_staff:
-#             from rest_framework.exceptions import PermissionDenied
-
-#             raise PermissionDenied(
-#                 "Only administrators can delete notices."
-#             )
-
-#         instance.delete()
 
 class NoticeViewSet(viewsets.ModelViewSet):
     serializer_class = NoticeSerializer
-    permission_classes = [IsAuthenticated]
+
+    def get_permissions(self):
+        if self.action in [
+            "create",
+            "update",
+            "partial_update",
+            "destroy",
+        ]:
+            return [IsAdminOnly()]
+
+        return [IsAuthenticated()]
 
     def get_queryset(self):
         user = self.request.user
 
-        # Admin can see both active and inactive notices
         if user.is_staff:
             return Notice.objects.all().order_by(
                 "-notice_date",
-                "-created_at"
+                "-created_at",
             )
 
-        # Teachers and parents only see active notices
         return Notice.objects.filter(
             is_active=True
         ).order_by(
             "-notice_date",
-            "-created_at"
+            "-created_at",
         )
-
-    def perform_create(self, serializer):
-        if not self.request.user.is_staff:
-            from rest_framework.exceptions import PermissionDenied
-
-            raise PermissionDenied(
-                "Only administrators can create notices."
-            )
-
-        serializer.save()
-
-    def perform_update(self, serializer):
-        if not self.request.user.is_staff:
-            from rest_framework.exceptions import PermissionDenied
-
-            raise PermissionDenied(
-                "Only administrators can update notices."
-            )
-
-        serializer.save()
-
-    def perform_destroy(self, instance):
-        if not self.request.user.is_staff:
-            from rest_framework.exceptions import PermissionDenied
-
-            raise PermissionDenied(
-                "Only administrators can delete notices."
-            )
-
-        instance.delete()
