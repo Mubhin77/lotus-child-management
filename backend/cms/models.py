@@ -64,6 +64,46 @@ class Activity(models.Model):
     def __str__(self):
         return self.name
 
+class Attendance(models.Model):
+    PRESENT = "present"
+    ABSENT = "absent"
+
+    STATUS_CHOICES = [
+        (PRESENT, "Present"),
+        (ABSENT, "Absent"),
+    ]
+
+    child = models.ForeignKey(
+        Child,
+        on_delete=models.CASCADE,
+        related_name="attendance_records",
+    )
+    teacher = models.ForeignKey(
+        Teacher,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="attendance_records",
+    )
+    attendance_date = models.DateField()
+    status = models.CharField(
+        max_length=10,
+        choices=STATUS_CHOICES,
+    )
+    marked_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-attendance_date", "child__first_name"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["child", "attendance_date"],
+                name="unique_child_attendance_date",
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.child} - {self.attendance_date} - {self.status}"
+
 
 class DailyReport(models.Model):
 
@@ -105,10 +145,6 @@ class DailyReport(models.Model):
     )
 
     report_date = models.DateField()
-
-    attendance_present = models.BooleanField(default=True)
-    arrival_time = models.TimeField(null=True, blank=True)
-    departure_time = models.TimeField(null=True, blank=True)
 
     mood = models.CharField(
         max_length=30,

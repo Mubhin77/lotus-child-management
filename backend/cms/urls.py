@@ -8,6 +8,7 @@ from .views import (
     ActivityViewSet,
     DailyReportViewSet,
     NoticeViewSet,
+    AttendanceViewSet,
     current_user,
 )
 
@@ -21,6 +22,7 @@ router.register("children", ChildViewSet, basename="child")
 router.register("activities", ActivityViewSet)
 router.register("daily-reports", DailyReportViewSet, basename="daily-report")
 router.register("notices", NoticeViewSet, basename="notice")
+router.register("attendance", AttendanceViewSet, basename="attendance")
 
 
 # urlpatterns = [

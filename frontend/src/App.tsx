@@ -12,12 +12,14 @@ import Classes from "./pages/admin/Classes";
 import DailyReports from "./pages/admin/DailyReports";
 import AdminNotices from "./pages/admin/Notices";
 import Activities from "./pages/admin/Activities";
+
 // Teacher
 import TeacherDashboard from "./pages/teacher/Dashboard";
 import TeacherDailyReport from "./pages/teacher/DailyReport";
 import TeacherReports from "./pages/teacher/Reports";
 import TeacherNotices from "./pages/teacher/Notices";
 import TeacherChildren from "./pages/teacher/Children";
+import Attendance from "./pages/teacher/Attendance";
 
 // Parent
 import ParentDashboard from "./pages/parent/Dashboard";
@@ -99,6 +101,8 @@ function App() {
 
           {/* /teacher/children */}
           <Route path="children" element={<TeacherChildren />} />
+
+          <Route path="attendance" element={<Attendance />} />
         </Route>
 
         {/* ==================== */}

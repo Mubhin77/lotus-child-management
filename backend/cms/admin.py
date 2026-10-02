@@ -5,6 +5,7 @@ from .models import (
     ClassRoom,
     Child,
     Activity,
+    Attendance,
     DailyReport,
     Notice,
 )
@@ -49,29 +50,53 @@ class ActivityAdmin(admin.ModelAdmin):
     list_filter = ("is_active",)
     search_fields = ("name",)
 
-
-@admin.register(DailyReport)
-class DailyReportAdmin(admin.ModelAdmin):
+@admin.register(Attendance)
+class AttendanceAdmin(admin.ModelAdmin):
     list_display = (
+        "id",
         "child",
-        "report_date",
         "teacher",
-        "attendance_present",
-        "mood",
-        "participation",
-        "submitted",
+        "attendance_date",
+        "status",
+        "marked_at",
     )
+
     list_filter = (
-        "report_date",
-        "attendance_present",
-        "mood",
-        "participation",
-        "submitted",
+        "attendance_date",
+        "status",
     )
+
     search_fields = (
         "child__first_name",
         "child__last_name",
         "teacher__user__username",
     )
 
+
+@admin.register(DailyReport)
+class DailyReportAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "child",
+        "teacher",
+        "report_date",
+        "mood",
+        "submitted",
+    )
+
+    list_filter = (
+        "report_date",
+        "submitted",
+        "mood",
+    )
+
+    search_fields = (
+        "child__first_name",
+        "child__last_name",
+        "teacher__user__username",
+    )
+
+    filter_horizontal = (
+        "activities",
+    )
 admin.site.register(Notice)

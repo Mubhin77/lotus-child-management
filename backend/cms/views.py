@@ -20,6 +20,7 @@ from .models import (
     Activity,
     DailyReport,
     Notice,
+    Attendance,
 )
 from .serializers import (
     TeacherSerializer,
@@ -29,6 +30,7 @@ from .serializers import (
     ActivitySerializer,
     DailyReportSerializer,
     NoticeSerializer,
+    AttendanceSerializer,
 )
 
 class TeacherViewSet(viewsets.ModelViewSet):
@@ -216,6 +218,161 @@ class ActivityViewSet(viewsets.ModelViewSet):
             is_active=True
         )
 
+class AttendanceViewSet(viewsets.ModelViewSet):
+    serializer_class = AttendanceSerializer
+
+    def get_permissions(self):
+        if self.action in [
+            "create",
+            "update",
+            "partial_update",
+            "destroy",
+        ]:
+            return [IsAuthenticatedOrReadOnlyParent()]
+
+        return [IsAuthenticated()]
+
+    def get_queryset(self):
+        user = self.request.user
+
+        if user.is_staff:
+            queryset = Attendance.objects.all()
+
+        elif hasattr(user, "teacher"):
+            queryset = Attendance.objects.filter(
+                child__classroom__teachers=user.teacher
+            ).distinct()
+
+        elif hasattr(user, "parent"):
+            queryset = Attendance.objects.filter(
+                child__parents=user.parent
+            ).distinct()
+
+        else:
+            queryset = Attendance.objects.none()
+
+        attendance_date = self.request.query_params.get("date")
+        classroom = self.request.query_params.get("classroom")
+        status_filter = self.request.query_params.get("status")
+        search = self.request.query_params.get("search")
+
+        if attendance_date:
+            queryset = queryset.filter(
+                attendance_date=attendance_date
+            )
+
+        if classroom:
+            queryset = queryset.filter(
+                child__classroom_id=classroom
+            )
+
+        if status_filter in [
+            Attendance.PRESENT,
+            Attendance.ABSENT,
+        ]:
+            queryset = queryset.filter(
+                status=status_filter
+            )
+
+        if search:
+            queryset = queryset.filter(
+                Q(child__first_name__icontains=search)
+                | Q(child__last_name__icontains=search)
+            )
+
+        return queryset
+
+    def perform_create(self, serializer):
+        user = self.request.user
+
+        if user.is_staff:
+            serializer.save()
+            return
+
+        if hasattr(user, "teacher"):
+            child = serializer.validated_data["child"]
+
+            if (
+                not child.classroom
+                or not child.classroom.teachers.filter(
+                    id=user.teacher.id
+                ).exists()
+            ):
+                from rest_framework.exceptions import PermissionDenied
+
+                raise PermissionDenied(
+                    "You are not allowed to mark attendance for this child."
+                )
+
+            serializer.save(teacher=user.teacher)
+            return
+
+        from rest_framework.exceptions import PermissionDenied
+
+        raise PermissionDenied(
+            "Parents are not allowed to create attendance records."
+        )
+
+    def perform_update(self, serializer):
+        user = self.request.user
+
+        if user.is_staff:
+            serializer.save()
+            return
+
+        if hasattr(user, "teacher"):
+            attendance = self.get_object()
+
+            if (
+                not attendance.child.classroom
+                or not attendance.child.classroom.teachers.filter(
+                    id=user.teacher.id
+                ).exists()
+            ):
+                from rest_framework.exceptions import PermissionDenied
+
+                raise PermissionDenied(
+                    "You are not allowed to update this attendance record."
+                )
+
+            serializer.save(teacher=user.teacher)
+            return
+
+        from rest_framework.exceptions import PermissionDenied
+
+        raise PermissionDenied(
+            "Parents are not allowed to update attendance."
+        )
+
+    def perform_destroy(self, instance):
+        user = self.request.user
+
+        if user.is_staff:
+            instance.delete()
+            return
+
+        if hasattr(user, "teacher"):
+            if (
+                not instance.child.classroom
+                or not instance.child.classroom.teachers.filter(
+                    id=user.teacher.id
+                ).exists()
+            ):
+                from rest_framework.exceptions import PermissionDenied
+
+                raise PermissionDenied(
+                    "You are not allowed to delete this attendance record."
+                )
+
+            instance.delete()
+            return
+
+        from rest_framework.exceptions import PermissionDenied
+
+        raise PermissionDenied(
+            "Parents are not allowed to delete attendance."
+        )
+
 class DailyReportViewSet(viewsets.ModelViewSet):
     serializer_class = DailyReportSerializer
 
@@ -274,17 +431,30 @@ class DailyReportViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         user = self.request.user
+        child = serializer.validated_data["child"]
+        report_date = serializer.validated_data["report_date"]
 
-        # Admin can create a report
+        attendance = Attendance.objects.filter(
+            child=child,
+            attendance_date=report_date,
+            status=Attendance.PRESENT,
+        ).first()
+
+        if not attendance:
+            from rest_framework.exceptions import ValidationError
+
+            raise ValidationError({
+                "child": (
+                    "A daily report can only be created "
+                    "for a child marked Present on this date."
+                )
+            })
+
         if user.is_staff:
             serializer.save()
             return
 
-        # Teacher can only create reports for children
-        # in their assigned classroom
         if hasattr(user, "teacher"):
-            child = serializer.validated_data["child"]
-
             if (
                 not child.classroom
                 or not child.classroom.teachers.filter(
@@ -300,7 +470,6 @@ class DailyReportViewSet(viewsets.ModelViewSet):
             serializer.save(teacher=user.teacher)
             return
 
-        # Parents cannot create reports
         from rest_framework.exceptions import PermissionDenied
 
         raise PermissionDenied(
