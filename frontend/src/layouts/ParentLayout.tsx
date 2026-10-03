@@ -1,5 +1,6 @@
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { logout } from "../services/authService";
+import logo from "../assets/logo.png";
 
 export default function ParentLayout() {
   const location = useLocation();
@@ -17,14 +18,14 @@ export default function ParentLayout() {
       icon: "👧",
     },
     {
+      name: "Attendance",
+      path: "/parent/attendance",
+      icon: "📋",
+    },
+    {
       name: "Daily Reports",
       path: "/parent/reports",
       icon: "📝",
-    },
-    {
-      name: "Attendance",
-      path: "/parent/attendance",
-      icon: "📅",
     },
     {
       name: "Notices",
@@ -35,79 +36,90 @@ export default function ParentLayout() {
 
   const handleLogout = () => {
     logout();
+    localStorage.removeItem("user_role");
+    localStorage.removeItem("selected_child_id");
     navigate("/login");
   };
 
   return (
-    <div className="min-h-screen bg-[#fff8fb] flex">
+    <div className="flex min-h-screen bg-[#fff8fb]">
+      {/* SIDEBAR */}
+      <aside className="fixed left-0 top-0 z-30 flex h-screen w-64 flex-col bg-white shadow-lg">
+        {/* LOGO */}
+        <div className="flex items-center gap-4 border-b border-gray-100 px-6 py-5">
+          <div className="flex h-[50px] w-[50px] shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-pink-500 to-purple-600 shadow-[0_4px_15px_rgba(233,30,99,0.3)]">
+            <img
+              src={logo}
+              alt="Lotus Montessori Logo"
+              className="h-full w-full object-cover"
+            />
+          </div>
 
-      {/* Sidebar */}
-      <aside className="w-64 shrink-0 bg-white border-r border-pink-100 flex flex-col min-h-screen">
+          <div>
+            <h1 className="bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text font-['Quicksand'] text-xl font-bold text-transparent">
+              Lotus CMS
+            </h1>
 
-        {/* Logo */}
-        <div className="px-6 py-7 border-b border-pink-100">
-          <h1 className="text-2xl font-bold text-pink-600">
-            Lotus CMS
-          </h1>
-
-          <p className="text-sm text-gray-500 mt-1">
-            Parent Portal
-          </p>
+            <p className="text-xs text-gray-400">Parent Portal</p>
+          </div>
         </div>
 
-        {/* Navigation */}
-        <nav className="flex-1 px-4 py-6 space-y-2">
+        {/* NAVIGATION */}
+        <nav className="flex-1 overflow-y-auto px-4 py-5">
+          <p className="mb-3 px-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Main Menu
+          </p>
 
-          {navItems.map((item) => {
-            const isActive =
-              item.path === "/parent"
-                ? location.pathname === "/parent"
-                : location.pathname.startsWith(item.path);
+          <div className="space-y-1">
+            {navItems.map((item) => {
+              const isActive =
+                item.path === "/parent"
+                  ? location.pathname === "/parent" ||
+                    location.pathname === "/parent/"
+                  : location.pathname.startsWith(item.path);
 
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
-                  isActive
-                    ? "bg-pink-100 text-pink-700 font-semibold"
-                    : "text-gray-600 hover:bg-pink-50 hover:text-pink-600"
-                }`}
-              >
-                <span className="text-lg w-6 text-center">
-                  {item.icon}
-                </span>
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition ${
+                    isActive
+                      ? "bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-md"
+                      : "text-gray-600 hover:bg-pink-50 hover:text-purple-600"
+                  }`}
+                >
+                  <span className="w-6 text-center text-base">{item.icon}</span>
 
-                <span>{item.name}</span>
-              </Link>
-            );
-          })}
-
+                  <span>{item.name}</span>
+                </Link>
+              );
+            })}
+          </div>
         </nav>
 
-        {/* Logout */}
-        <div className="p-4 border-t border-pink-100">
+        {/* LOGOUT */}
+        <div className="border-t border-gray-100 p-4">
+          <div className="mb-3 rounded-xl bg-purple-50 px-4 py-3">
+            <p className="text-xs text-gray-400">Logged in as</p>
+
+            <p className="mt-1 text-sm font-semibold text-purple-700">Parent</p>
+          </div>
 
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-red-50 hover:text-red-600 transition"
+            className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-gray-600 transition hover:bg-red-50 hover:text-red-600"
           >
-            <span className="text-lg w-6 text-center">
-              🚪
-            </span>
+            <span className="w-6 text-center">↪</span>
 
             <span>Logout</span>
           </button>
-
         </div>
-
       </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 min-w-0 min-h-screen">
+      {/* MAIN CONTENT */}
+      <main className="ml-64 min-h-screen flex-1">
         <Outlet />
       </main>
-
     </div>
   );
 }

@@ -255,6 +255,10 @@ class AttendanceViewSet(viewsets.ModelViewSet):
         classroom = self.request.query_params.get("classroom")
         status_filter = self.request.query_params.get("status")
         search = self.request.query_params.get("search")
+        child = self.request.query_params.get("child")
+
+        if child:
+            queryset = queryset.filter(child_id=child)
 
         if attendance_date:
             queryset = queryset.filter(
@@ -405,6 +409,10 @@ class DailyReportViewSet(viewsets.ModelViewSet):
         classroom = self.request.query_params.get("classroom")
         submitted = self.request.query_params.get("submitted")
         search = self.request.query_params.get("search")
+        child = self.request.query_params.get("child")
+
+        if child:
+            queryset = queryset.filter(child_id=child)
 
         if report_date:
             queryset = queryset.filter(

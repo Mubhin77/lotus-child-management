@@ -289,7 +289,7 @@ export default function TeacherDashboard() {
 
                     {currentUser?.role === "teacher" && (
                       <span className="hidden sm:inline-flex px-2.5 py-1 rounded-full bg-purple-50 text-purple-600 text-xs font-semibold">
-                        Teacher
+                        {classroomName}
                       </span>
                     )}
                   </div>
