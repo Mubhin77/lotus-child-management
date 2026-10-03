@@ -21,6 +21,7 @@ import TeacherNotices from "./pages/teacher/Notices";
 import TeacherChildren from "./pages/teacher/Children";
 import Attendance from "./pages/teacher/Attendance";
 
+
 // Parent
 import ParentDashboard from "./pages/parent/Dashboard";
 import ParentChild from "./pages/parent/Child";
@@ -103,6 +104,7 @@ function App() {
           <Route path="children" element={<TeacherChildren />} />
 
           <Route path="attendance" element={<Attendance />} />
+
         </Route>
 
         {/* ==================== */}
