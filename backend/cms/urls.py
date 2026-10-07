@@ -9,6 +9,7 @@ from .views import (
     DailyReportViewSet,
     NoticeViewSet,
     AttendanceViewSet,
+    insights_summary,
     current_user,
 )
 
@@ -32,4 +33,6 @@ router.register("attendance", AttendanceViewSet, basename="attendance")
 urlpatterns = [
     path("me/", current_user, name="current-user"),
     path("", include(router.urls)),
+    path("insights/",insights_summary,name="insights-summary"
+),
 ]

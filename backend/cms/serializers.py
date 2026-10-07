@@ -85,10 +85,28 @@ class ParentSerializer(serializers.ModelSerializer):
             "is_active",
         ]
 
+# class ClassRoomSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = ClassRoom
+#         fields = "__all__"
 class ClassRoomSerializer(serializers.ModelSerializer):
+    teacher_names = serializers.SerializerMethodField()
+
     class Meta:
         model = ClassRoom
-        fields = "__all__"
+        fields = [
+            "id",
+            "name",
+            "academic_year",
+            "teachers",
+            "teacher_names",
+        ]
+
+    def get_teacher_names(self, obj):
+        return [
+            str(teacher)
+            for teacher in obj.teachers.all()
+        ]
 
 
 class ChildSerializer(serializers.ModelSerializer):
@@ -119,68 +137,6 @@ class ActivitySerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-
-# class DailyReportSerializer(serializers.ModelSerializer):
-#     teacher = serializers.PrimaryKeyRelatedField(read_only=True)
-#     child_name = serializers.SerializerMethodField()
-#     teacher_name = serializers.SerializerMethodField()
-#     classroom_name = serializers.SerializerMethodField()
-#     activity_names = serializers.SerializerMethodField()
-
-#     class Meta:
-#         model = DailyReport
-#         fields = [
-#             "id",
-#             "child",
-#             "child_name",
-#             "teacher",
-#             "teacher_name",
-#             "classroom_name",
-#             "report_date",
-#             "attendance_present",
-#             "arrival_time",
-#             "departure_time",
-#             "mood",
-#             "morning_snack",
-#             "lunch",
-#             "rest_status",
-#             "rest_start",
-#             "rest_end",
-#             "participation",
-#             "teacher_observation",
-#             "activities",
-#             "activity_names",
-#             "submitted",
-#             "created_at",
-#             "updated_at",
-#         ]
-
-#     def get_child_name(self, obj):
-#         return str(obj.child)
-
-#     def get_teacher_name(self, obj):
-#         return str(obj.teacher)
-
-#     def get_classroom_name(self, obj):
-#         if obj.child.classroom:
-#             return obj.child.classroom.name
-#         return ""
-
-#     def get_activity_names(self, obj):
-#         return list(obj.activities.values_list("name", flat=True))
-
-#     def validate(self, attrs):
-#         """
-#         Prevent changing the child when updating an existing report.
-#         """
-#         if self.instance and "child" in attrs:
-#             if attrs["child"].id != self.instance.child.id:
-#                 from rest_framework.exceptions import ValidationError
-#                 raise ValidationError({
-#                     "child": "The child cannot be changed after a report is created."
-#                 })
-
-#         return attrs
 
 class DailyReportSerializer(serializers.ModelSerializer):
     teacher = serializers.PrimaryKeyRelatedField(read_only=True)
@@ -232,13 +188,31 @@ class DailyReportSerializer(serializers.ModelSerializer):
         )
 
     def validate(self, attrs):
+        child = attrs.get("child") or self.instance.child
+        report_date = (
+            attrs.get("report_date")
+            or self.instance.report_date
+        )
+
         if self.instance and "child" in attrs:
             if attrs["child"].id != self.instance.child.id:
-                from rest_framework.exceptions import ValidationError
-
-                raise ValidationError({
+                raise serializers.ValidationError({
                     "child": "The child cannot be changed after a report is created."
                 })
+
+        attendance_exists = Attendance.objects.filter(
+            child=child,
+            attendance_date=report_date,
+            status=Attendance.PRESENT,
+        ).exists()
+
+        if not attendance_exists:
+            raise serializers.ValidationError({
+                "report_date": (
+                    "A daily report can only be saved when the child "
+                    "is marked present for that date."
+                )
+            })
 
         return attrs
 
@@ -275,6 +249,30 @@ class AttendanceSerializer(serializers.ModelSerializer):
         if obj.child.classroom:
             return obj.child.classroom.name
         return ""
+
+    def validate(self, attrs):
+        child = attrs.get("child") or self.instance.child
+        attendance_date = (
+            attrs.get("attendance_date")
+            or self.instance.attendance_date
+        )
+        status = attrs.get("status") or self.instance.status
+
+        if status == Attendance.ABSENT:
+            report_exists = DailyReport.objects.filter(
+                child=child,
+                report_date=attendance_date,
+            ).exists()
+
+            if report_exists:
+                raise serializers.ValidationError({
+                    "status": (
+                        "This child already has a daily report for this date. "
+                        "The attendance cannot be changed to absent."
+                    )
+                })
+
+        return attrs
     
 class NoticeSerializer(serializers.ModelSerializer):
     class Meta:

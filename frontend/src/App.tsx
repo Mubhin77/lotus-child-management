@@ -3,6 +3,9 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 // Auth
 import Login from "./pages/auth/Login";
 
+//Home
+import Home from "./pages/Home";
+
 // Admin
 import AdminDashboard from "./pages/admin/Dashboard";
 import Children from "./pages/admin/Children";
@@ -12,6 +15,7 @@ import Classes from "./pages/admin/Classes";
 import DailyReports from "./pages/admin/DailyReports";
 import AdminNotices from "./pages/admin/Notices";
 import Activities from "./pages/admin/Activities";
+import Insights from "./pages/admin/Insights";
 
 // Teacher
 import TeacherDashboard from "./pages/teacher/Dashboard";
@@ -44,6 +48,7 @@ function App() {
         {/* ==================== */}
         {/* PUBLIC */}
         {/* ==================== */}
+        
 
         <Route path="/login" element={<Login />} />
 
@@ -74,6 +79,8 @@ function App() {
           <Route path="notices" element={<AdminNotices />} />
 
           <Route path="activities" element={<Activities />} />
+
+          <Route path="insights" element={<Insights />} />
         </Route>
 
         {/* ==================== */}
@@ -130,7 +137,7 @@ function App() {
         {/* DEFAULT */}
         {/* ==================== */}
 
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/" element={<Home />} />
 
         {/* ==================== */}
         {/* UNKNOWN ROUTES */}
