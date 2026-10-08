@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/auth/Login";
 
 //Home
-import Home from "./pages/Home";
+import LandingPage from "./pages/LandingPage";
 
 // Admin
 import AdminDashboard from "./pages/admin/Dashboard";
@@ -25,14 +25,13 @@ import TeacherNotices from "./pages/teacher/Notices";
 import TeacherChildren from "./pages/teacher/Children";
 import Attendance from "./pages/teacher/Attendance";
 
-
 // Parent
 import ParentDashboard from "./pages/parent/Dashboard";
 import ParentChild from "./pages/parent/Child";
 import ParentReports from "./pages/parent/Reports";
 import ParentAttendance from "./pages/parent/Attendance";
 import ParentNotices from "./pages/parent/Notices";
-  
+
 // Layouts
 import AdminLayout from "./layouts/AdminLayout";
 import TeacherLayout from "./layouts/TeacherLayout";
@@ -48,7 +47,6 @@ function App() {
         {/* ==================== */}
         {/* PUBLIC */}
         {/* ==================== */}
-        
 
         <Route path="/login" element={<Login />} />
 
@@ -111,7 +109,6 @@ function App() {
           <Route path="children" element={<TeacherChildren />} />
 
           <Route path="attendance" element={<Attendance />} />
-
         </Route>
 
         {/* ==================== */}
@@ -137,7 +134,7 @@ function App() {
         {/* DEFAULT */}
         {/* ==================== */}
 
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<LandingPage />} />
 
         {/* ==================== */}
         {/* UNKNOWN ROUTES */}
