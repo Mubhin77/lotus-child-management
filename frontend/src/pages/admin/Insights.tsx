@@ -114,20 +114,20 @@ const label = (value: string) => {
     .replace(/\b\w/g, (letter) => letter.toUpperCase());
 };
 
-const getMostCommon = (values: string[]) => {
-  if (!values.length) return "No data";
+// const getMostCommon = (values: string[]) => {
+//   if (!values.length) return "No data";
 
-  const counts: Record<string, number> = {};
+//   const counts: Record<string, number> = {};
 
-  values.forEach((value) => {
-    if (!value) return;
-    counts[value] = (counts[value] || 0) + 1;
-  });
+//   values.forEach((value) => {
+//     if (!value) return;
+//     counts[value] = (counts[value] || 0) + 1;
+//   });
 
-  const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+//   const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
 
-  return sorted[0]?.[0] || "No data";
-};
+//   return sorted[0]?.[0] || "No data";
+// };
 
 // ============================================================
 // SMALL COMPONENTS

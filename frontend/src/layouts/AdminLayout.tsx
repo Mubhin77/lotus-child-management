@@ -63,7 +63,7 @@ function AdminLayout() {
   return (
     <div className="flex min-h-screen bg-[#fff8fb]">
       {/* SIDEBAR */}
-      <aside className="fixed left-0 top-0 z-30 flex h-screen w-64 flex-col bg-white shadow-lg">
+      <aside className="fixed left-0 top-0 z-30 flex h-screen w-[273px] flex-col bg-white shadow-lg">
         {/* LOGO */}
         <div className="flex items-center gap-4 border-b border-gray-100 px-6 py-5">
           <div className="flex h-[50px] w-[50px] shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-pink-500 to-purple-600 shadow-[0_4px_15px_rgba(233,30,99,0.3)]">
@@ -136,7 +136,7 @@ function AdminLayout() {
       </aside>
 
       {/* MAIN CONTENT */}
-      <main className="ml-64 min-h-screen flex-1">
+      <main className="ml-[273px] min-h-screen flex-1 px-8 py-8">
         <Outlet />
       </main>
     </div>

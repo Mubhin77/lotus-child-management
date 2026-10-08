@@ -1,4 +1,5 @@
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import type { FormEvent } from "react";
+import { useEffect, useMemo, useState } from "react";
 import api from "../../services/api";
 
 interface Child {
@@ -230,7 +231,8 @@ function Children() {
   };
 
   return (
-    <div className="min-h-screen p-8">
+    // <div className="min-h-screen p-8">
+    <div className="w-full space-y-6">
       {/* Header */}
 
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">

@@ -73,9 +73,7 @@ function getLocalDate() {
   const date = new Date();
   const offset = date.getTimezoneOffset();
 
-  return new Date(date.getTime() - offset * 60000)
-    .toISOString()
-    .split("T")[0];
+  return new Date(date.getTime() - offset * 60000).toISOString().split("T")[0];
 }
 
 function formatToday() {
@@ -205,9 +203,7 @@ function Dashboard() {
    * a daily report yet.
    */
   const pendingReportChildren = useMemo(() => {
-    const reportChildIds = new Set(
-      dailyReports.map((report) => report.child),
-    );
+    const reportChildIds = new Set(dailyReports.map((report) => report.child));
 
     return presentChildren.filter(
       (record) => !reportChildIds.has(record.child),
@@ -220,9 +216,7 @@ function Dashboard() {
   const attendanceRate = useMemo(() => {
     if (attendance.length === 0) return 0;
 
-    return Math.round(
-      (presentChildren.length / attendance.length) * 100,
-    );
+    return Math.round((presentChildren.length / attendance.length) * 100);
   }, [attendance, presentChildren]);
 
   /*
@@ -234,23 +228,18 @@ function Dashboard() {
 
     const completed = presentChildren.filter((attendanceRecord) =>
       dailyReports.some(
-        (report) =>
-          report.child === attendanceRecord.child && report.submitted,
+        (report) => report.child === attendanceRecord.child && report.submitted,
       ),
     );
 
-    return Math.round(
-      (completed.length / presentChildren.length) * 100,
-    );
+    return Math.round((completed.length / presentChildren.length) * 100);
   }, [presentChildren, dailyReports]);
 
   /*
    * Active notices only.
    */
   const activeNotices = useMemo(() => {
-    return notices
-      .filter((notice) => notice.is_active)
-      .slice(0, 4);
+    return notices.filter((notice) => notice.is_active).slice(0, 4);
   }, [notices]);
 
   /*
@@ -279,23 +268,23 @@ function Dashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#fff8fb] p-5 md:p-7 xl:p-8">
-        <div className="max-w-7xl mx-auto space-y-6 animate-pulse">
-          <div className="h-44 rounded-[2rem] bg-white" />
+      // <div className="min-h-screen bg-[#fff8fb] p-5 md:p-7 xl:p-8">
+      //   < className="max-w-7xl mx-auto space-y-6 animate-pulse">
+      <div className="w-full space-y-6 animate-pulse">
+        <div className="h-44 rounded-[2rem] bg-white" />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
-            {[1, 2, 3, 4].map((item) => (
-              <div key={item} className="h-36 rounded-3xl bg-white" />
-            ))}
-          </div>
-
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-            <div className="xl:col-span-2 h-96 rounded-3xl bg-white" />
-            <div className="h-96 rounded-3xl bg-white" />
-          </div>
-
-          <div className="h-72 rounded-3xl bg-white" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+          {[1, 2, 3, 4].map((item) => (
+            <div key={item} className="h-36 rounded-3xl bg-white" />
+          ))}
         </div>
+
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+          <div className="xl:col-span-2 h-96 rounded-3xl bg-white" />
+          <div className="h-96 rounded-3xl bg-white" />
+        </div>
+
+        <div className="h-72 rounded-3xl bg-white" />
       </div>
     );
   }
@@ -307,9 +296,8 @@ function Dashboard() {
    */
 
   return (
-    <div className="min-h-screen bg-[#fff8fb] p-5 md:p-7 xl:p-8">
+    <div className="w-full space-y-6">
       <div className="max-w-7xl mx-auto space-y-6">
-
         {/* =================================================
             ADMIN HEADER
             DO NOT CHANGE
@@ -322,15 +310,12 @@ function Dashboard() {
 
           <div className="relative p-6 md:p-8">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-
               <div className="flex items-start gap-4">
-
                 <div className="hidden sm:flex w-14 h-14 shrink-0 rounded-2xl bg-gradient-to-br from-pink-500 to-purple-500 items-center justify-center text-white text-xl font-bold shadow-lg shadow-pink-200">
                   A
                 </div>
 
                 <div>
-
                   <div className="flex flex-wrap items-center gap-2 mb-2">
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-pink-50 text-pink-600 text-xs font-bold">
                       <span className="w-1.5 h-1.5 rounded-full bg-pink-500" />
@@ -386,13 +371,11 @@ function Dashboard() {
         ================================================= */}
 
         <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
-
           <Link
             to="/admin/children"
             className="group bg-white rounded-3xl border border-pink-100/80 shadow-[0_8px_30px_rgba(53,35,67,0.05)] p-6 hover:-translate-y-1 hover:shadow-[0_14px_35px_rgba(53,35,67,0.08)] transition-all"
           >
             <div className="flex items-start justify-between">
-
               <div>
                 <p className="text-sm font-semibold text-gray-500">
                   Total Children
@@ -402,9 +385,7 @@ function Dashboard() {
                   {children.length}
                 </p>
 
-                <p className="mt-2 text-sm text-gray-400">
-                  Enrolled students
-                </p>
+                <p className="mt-2 text-sm text-gray-400">Enrolled students</p>
               </div>
 
               <div className="w-14 h-14 rounded-2xl bg-pink-50 flex items-center justify-center text-2xl group-hover:scale-105 transition">
@@ -414,9 +395,7 @@ function Dashboard() {
 
             <div className="mt-5 flex items-center gap-1 text-xs font-bold text-pink-500">
               Manage children
-              <span className="group-hover:translate-x-1 transition">
-                →
-              </span>
+              <span className="group-hover:translate-x-1 transition">→</span>
             </div>
           </Link>
 
@@ -425,7 +404,6 @@ function Dashboard() {
             className="group bg-white rounded-3xl border border-purple-100/80 shadow-[0_8px_30px_rgba(53,35,67,0.05)] p-6 hover:-translate-y-1 hover:shadow-[0_14px_35px_rgba(53,35,67,0.08)] transition-all"
           >
             <div className="flex items-start justify-between">
-
               <div>
                 <p className="text-sm font-semibold text-gray-500">
                   Total Teachers
@@ -435,9 +413,7 @@ function Dashboard() {
                   {teachers.length}
                 </p>
 
-                <p className="mt-2 text-sm text-gray-400">
-                  Teaching staff
-                </p>
+                <p className="mt-2 text-sm text-gray-400">Teaching staff</p>
               </div>
 
               <div className="w-14 h-14 rounded-2xl bg-purple-50 flex items-center justify-center text-2xl group-hover:scale-105 transition">
@@ -447,9 +423,7 @@ function Dashboard() {
 
             <div className="mt-5 flex items-center gap-1 text-xs font-bold text-purple-500">
               Manage teachers
-              <span className="group-hover:translate-x-1 transition">
-                →
-              </span>
+              <span className="group-hover:translate-x-1 transition">→</span>
             </div>
           </Link>
 
@@ -458,7 +432,6 @@ function Dashboard() {
             className="group bg-white rounded-3xl border border-blue-100/80 shadow-[0_8px_30px_rgba(53,35,67,0.05)] p-6 hover:-translate-y-1 hover:shadow-[0_14px_35px_rgba(53,35,67,0.08)] transition-all"
           >
             <div className="flex items-start justify-between">
-
               <div>
                 <p className="text-sm font-semibold text-gray-500">
                   Total Parents
@@ -468,9 +441,7 @@ function Dashboard() {
                   {parents.length}
                 </p>
 
-                <p className="mt-2 text-sm text-gray-400">
-                  Parent accounts
-                </p>
+                <p className="mt-2 text-sm text-gray-400">Parent accounts</p>
               </div>
 
               <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center text-2xl group-hover:scale-105 transition">
@@ -480,9 +451,7 @@ function Dashboard() {
 
             <div className="mt-5 flex items-center gap-1 text-xs font-bold text-blue-500">
               Manage parents
-              <span className="group-hover:translate-x-1 transition">
-                →
-              </span>
+              <span className="group-hover:translate-x-1 transition">→</span>
             </div>
           </Link>
 
@@ -491,7 +460,6 @@ function Dashboard() {
             className="group bg-white rounded-3xl border border-green-100/80 shadow-[0_8px_30px_rgba(53,35,67,0.05)] p-6 hover:-translate-y-1 hover:shadow-[0_14px_35px_rgba(53,35,67,0.08)] transition-all"
           >
             <div className="flex items-start justify-between">
-
               <div>
                 <p className="text-sm font-semibold text-gray-500">
                   Total Classes
@@ -501,9 +469,7 @@ function Dashboard() {
                   {classes.length}
                 </p>
 
-                <p className="mt-2 text-sm text-gray-400">
-                  Active classrooms
-                </p>
+                <p className="mt-2 text-sm text-gray-400">Active classrooms</p>
               </div>
 
               <div className="w-14 h-14 rounded-2xl bg-green-50 flex items-center justify-center text-2xl group-hover:scale-105 transition">
@@ -513,12 +479,9 @@ function Dashboard() {
 
             <div className="mt-5 flex items-center gap-1 text-xs font-bold text-green-500">
               Manage classes
-              <span className="group-hover:translate-x-1 transition">
-                →
-              </span>
+              <span className="group-hover:translate-x-1 transition">→</span>
             </div>
           </Link>
-
         </section>
 
         {/* =================================================
@@ -526,14 +489,12 @@ function Dashboard() {
         ================================================= */}
 
         <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
-
           {/* Attendance */}
           <Link
             to="/admin/reports"
             className="bg-white rounded-3xl border border-pink-100/80 shadow-[0_8px_30px_rgba(53,35,67,0.05)] p-5 hover:-translate-y-1 transition-all"
           >
             <div className="flex items-center justify-between">
-
               <div>
                 <p className="text-sm font-semibold text-gray-500">
                   Today's Attendance
@@ -580,7 +541,6 @@ function Dashboard() {
           {/* Present */}
           <div className="bg-white rounded-3xl border border-green-100/80 shadow-[0_8px_30px_rgba(53,35,67,0.05)] p-5">
             <div className="flex items-center justify-between">
-
               <div>
                 <p className="text-sm font-semibold text-gray-500">
                   Present Today
@@ -604,7 +564,6 @@ function Dashboard() {
           {/* Absent */}
           <div className="bg-white rounded-3xl border border-red-100/80 shadow-[0_8px_30px_rgba(53,35,67,0.05)] p-5">
             <div className="flex items-center justify-between">
-
               <div>
                 <p className="text-sm font-semibold text-gray-500">
                   Absent Today
@@ -631,7 +590,6 @@ function Dashboard() {
             className="bg-white rounded-3xl border border-purple-100/80 shadow-[0_8px_30px_rgba(53,35,67,0.05)] p-5 hover:-translate-y-1 transition-all"
           >
             <div className="flex items-center justify-between">
-
               <div>
                 <p className="text-sm font-semibold text-gray-500">
                   Daily Reports
@@ -666,7 +624,6 @@ function Dashboard() {
               </div>
             )}
           </Link>
-
         </section>
 
         {/* =================================================
@@ -674,10 +631,8 @@ function Dashboard() {
         ================================================= */}
 
         <section className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-
           {/* Attention Required */}
           <div className="xl:col-span-2 bg-white rounded-3xl border border-pink-100/80 shadow-[0_8px_30px_rgba(53,35,67,0.05)] overflow-hidden">
-
             <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
               <div>
                 <h2 className="text-xl font-bold text-[#30435b]">
@@ -697,7 +652,6 @@ function Dashboard() {
             {pendingReportChildren.length === 0 &&
             absentChildren.length === 0 ? (
               <div className="p-10 text-center">
-
                 <div className="w-14 h-14 mx-auto rounded-2xl bg-green-50 flex items-center justify-center text-2xl mb-4">
                   ✓
                 </div>
@@ -709,18 +663,15 @@ function Dashboard() {
                 <p className="text-sm text-gray-400 mt-1">
                   No attendance or report issues require attention right now.
                 </p>
-
               </div>
             ) : (
               <div className="divide-y divide-gray-100">
-
                 {pendingReportChildren.slice(0, 5).map((record) => (
                   <div
                     key={`pending-${record.child}`}
                     className="flex items-center justify-between px-6 py-4"
                   >
                     <div className="flex items-center gap-4">
-
                       <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center">
                         📝
                       </div>
@@ -751,7 +702,6 @@ function Dashboard() {
                     className="flex items-center justify-between px-6 py-4"
                   >
                     <div className="flex items-center gap-4">
-
                       <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center">
                         —
                       </div>
@@ -772,23 +722,17 @@ function Dashboard() {
                     </span>
                   </div>
                 ))}
-
               </div>
             )}
           </div>
 
           {/* Classroom Overview */}
           <div className="bg-white rounded-3xl border border-pink-100/80 shadow-[0_8px_30px_rgba(53,35,67,0.05)] overflow-hidden">
-
             <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-bold text-[#30435b]">
-                  Classrooms
-                </h2>
+                <h2 className="text-xl font-bold text-[#30435b]">Classrooms</h2>
 
-                <p className="text-sm text-gray-400 mt-1">
-                  Children by class
-                </p>
+                <p className="text-sm text-gray-400 mt-1">Children by class</p>
               </div>
 
               <Link
@@ -801,30 +745,22 @@ function Dashboard() {
 
             {classroomStats.length === 0 ? (
               <div className="p-8 text-center">
+                <div className="text-3xl mb-3">🏫</div>
 
-                <div className="text-3xl mb-3">
-                  🏫
-                </div>
-
-                <p className="font-semibold text-[#30435b]">
-                  No classrooms
-                </p>
+                <p className="font-semibold text-[#30435b]">No classrooms</p>
 
                 <p className="text-sm text-gray-400 mt-1">
                   Create a classroom to begin.
                 </p>
-
               </div>
             ) : (
               <div className="divide-y divide-gray-100">
-
                 {classroomStats.slice(0, 6).map((classroom) => (
                   <div
                     key={classroom.id}
                     className="px-6 py-4 flex items-center justify-between"
                   >
                     <div className="flex items-center gap-3">
-
                       <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-pink-50 to-purple-50 flex items-center justify-center text-xs font-bold text-pink-600">
                         {classroom.name.charAt(0).toUpperCase()}
                       </div>
@@ -845,10 +781,8 @@ function Dashboard() {
                     </span>
                   </div>
                 ))}
-
               </div>
             )}
-
           </div>
         </section>
 
@@ -857,13 +791,9 @@ function Dashboard() {
         ================================================= */}
 
         <section className="bg-white rounded-3xl border border-pink-100/80 shadow-[0_8px_30px_rgba(53,35,67,0.05)] overflow-hidden">
-
           <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
-
             <div>
-              <h2 className="text-xl font-bold text-[#30435b]">
-                Children
-              </h2>
+              <h2 className="text-xl font-bold text-[#30435b]">Children</h2>
 
               <p className="text-sm text-gray-400 mt-1">
                 Students currently registered in Lotus CMS
@@ -876,19 +806,13 @@ function Dashboard() {
             >
               Manage all →
             </Link>
-
           </div>
 
           {children.length === 0 ? (
             <div className="p-10 text-center">
+              <div className="text-3xl mb-3">👧</div>
 
-              <div className="text-3xl mb-3">
-                👧
-              </div>
-
-              <p className="font-semibold text-[#30435b]">
-                No children found
-              </p>
+              <p className="font-semibold text-[#30435b]">No children found</p>
 
               <p className="text-sm text-gray-400 mt-1">
                 Add children to begin managing your school.
@@ -900,26 +824,19 @@ function Dashboard() {
               >
                 Add Child
               </Link>
-
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-gray-100">
-
               {children.slice(0, 6).map((child) => (
                 <div
                   key={child.id}
                   className="bg-white p-5 flex items-center gap-4 hover:bg-pink-50/30 transition"
                 >
-
                   <div className="w-11 h-11 shrink-0 rounded-xl bg-gradient-to-br from-pink-50 to-purple-50 flex items-center justify-center text-sm font-bold text-pink-600">
-                    {getInitials(
-                      child.first_name,
-                      child.last_name,
-                    )}
+                    {getInitials(child.first_name, child.last_name)}
                   </div>
 
                   <div className="min-w-0">
-
                     <p className="font-semibold text-[#30435b] truncate">
                       {child.first_name} {child.last_name}
                     </p>
@@ -927,14 +844,11 @@ function Dashboard() {
                     <p className="text-xs text-gray-400 mt-0.5">
                       {child.classroom_name || "No classroom assigned"}
                     </p>
-
                   </div>
                 </div>
               ))}
-
             </div>
           )}
-
         </section>
 
         {/* =================================================
@@ -942,9 +856,7 @@ function Dashboard() {
         ================================================= */}
 
         <section className="bg-white rounded-3xl border border-pink-100/80 shadow-[0_8px_30px_rgba(53,35,67,0.05)] overflow-hidden">
-
           <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
-
             <div>
               <h2 className="text-xl font-bold text-[#30435b]">
                 Recent Notices
@@ -961,42 +873,33 @@ function Dashboard() {
             >
               Manage notices →
             </Link>
-
           </div>
 
           {activeNotices.length === 0 ? (
             <div className="p-8 text-center">
-
               <div className="w-14 h-14 mx-auto rounded-2xl bg-pink-50 flex items-center justify-center text-2xl mb-4">
                 📢
               </div>
 
-              <p className="font-semibold text-[#30435b]">
-                No active notices
-              </p>
+              <p className="font-semibold text-[#30435b]">No active notices</p>
 
               <p className="text-sm text-gray-400 mt-1">
                 Create a notice when you have an announcement to share.
               </p>
-
             </div>
           ) : (
             <div className="divide-y divide-gray-100">
-
               {activeNotices.map((notice) => (
                 <div
                   key={notice.id}
                   className="px-6 py-4 flex items-start gap-4 hover:bg-pink-50/30 transition"
                 >
-
                   <div className="w-10 h-10 shrink-0 rounded-xl bg-pink-50 flex items-center justify-center">
                     📢
                   </div>
 
                   <div className="min-w-0 flex-1">
-
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
-
                       <h3 className="font-semibold text-[#30435b]">
                         {notice.title}
                       </h3>
@@ -1004,7 +907,6 @@ function Dashboard() {
                       <span className="text-xs text-gray-400">
                         {formatShortDate(notice.notice_date)}
                       </span>
-
                     </div>
 
                     <p className="text-sm text-gray-500 mt-1 line-clamp-2">
@@ -1016,15 +918,11 @@ function Dashboard() {
                         Event: {formatShortDate(notice.event_date)}
                       </p>
                     )}
-
                   </div>
-
                 </div>
               ))}
-
             </div>
           )}
-
         </section>
 
         {/* =================================================
@@ -1032,12 +930,9 @@ function Dashboard() {
         ================================================= */}
 
         <section className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-
           {/* People overview */}
           <div className="xl:col-span-2 bg-white rounded-3xl border border-pink-100/80 shadow-[0_8px_30px_rgba(53,35,67,0.05)] p-6">
-
             <div className="flex items-center justify-between mb-6">
-
               <div>
                 <h2 className="text-xl font-bold text-[#30435b]">
                   School Overview
@@ -1051,18 +946,14 @@ function Dashboard() {
               <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-pink-50 to-purple-50 flex items-center justify-center text-xl">
                 🏫
               </div>
-
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-
               <Link
                 to="/admin/children"
                 className="rounded-2xl bg-pink-50 p-5 hover:bg-pink-100 transition"
               >
-                <p className="text-sm font-semibold text-gray-500">
-                  Children
-                </p>
+                <p className="text-sm font-semibold text-gray-500">Children</p>
 
                 <p className="mt-2 text-3xl font-bold text-[#30435b]">
                   {children.length}
@@ -1073,9 +964,7 @@ function Dashboard() {
                 to="/admin/teachers"
                 className="rounded-2xl bg-purple-50 p-5 hover:bg-purple-100 transition"
               >
-                <p className="text-sm font-semibold text-gray-500">
-                  Teachers
-                </p>
+                <p className="text-sm font-semibold text-gray-500">Teachers</p>
 
                 <p className="mt-2 text-3xl font-bold text-[#30435b]">
                   {teachers.length}
@@ -1086,28 +975,22 @@ function Dashboard() {
                 to="/admin/parents"
                 className="rounded-2xl bg-blue-50 p-5 hover:bg-blue-100 transition"
               >
-                <p className="text-sm font-semibold text-gray-500">
-                  Parents
-                </p>
+                <p className="text-sm font-semibold text-gray-500">Parents</p>
 
                 <p className="mt-2 text-3xl font-bold text-[#30435b]">
                   {parents.length}
                 </p>
               </Link>
-
             </div>
-
           </div>
 
           {/* Total people */}
           <div className="bg-white rounded-3xl border border-pink-100/80 shadow-[0_8px_30px_rgba(53,35,67,0.05)] p-6">
-
             <p className="text-sm font-semibold text-gray-500">
               Total Registered People
             </p>
 
             <div className="flex items-end gap-2 mt-4">
-
               <span className="text-5xl font-bold text-[#30435b]">
                 {totalUsers}
               </span>
@@ -1115,15 +998,11 @@ function Dashboard() {
               <span className="text-sm text-gray-400 mb-2">
                 accounts & records
               </span>
-
             </div>
 
             <div className="mt-6 space-y-3">
-
               <div className="flex justify-between text-sm">
-                <span className="text-gray-500">
-                  Children
-                </span>
+                <span className="text-gray-500">Children</span>
 
                 <span className="font-bold text-[#30435b]">
                   {children.length}
@@ -1131,9 +1010,7 @@ function Dashboard() {
               </div>
 
               <div className="flex justify-between text-sm">
-                <span className="text-gray-500">
-                  Teachers
-                </span>
+                <span className="text-gray-500">Teachers</span>
 
                 <span className="font-bold text-[#30435b]">
                   {teachers.length}
@@ -1141,19 +1018,14 @@ function Dashboard() {
               </div>
 
               <div className="flex justify-between text-sm">
-                <span className="text-gray-500">
-                  Parents
-                </span>
+                <span className="text-gray-500">Parents</span>
 
                 <span className="font-bold text-[#30435b]">
                   {parents.length}
                 </span>
               </div>
-
             </div>
-
           </div>
-
         </section>
 
         {/* =================================================
@@ -1161,9 +1033,7 @@ function Dashboard() {
         ================================================= */}
 
         <section className="bg-white rounded-3xl border border-pink-100/80 shadow-[0_8px_30px_rgba(53,35,67,0.05)] p-6">
-
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
-
             <div>
               <h2 className="text-xl font-bold text-[#30435b]">
                 Quick Actions
@@ -1177,11 +1047,9 @@ function Dashboard() {
             <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-pink-50 to-purple-50 flex items-center justify-center text-xl">
               ✨
             </div>
-
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-
             <Link
               to="/admin/children"
               className="group rounded-2xl border border-pink-100 bg-pink-50/50 p-5 hover:bg-pink-50 hover:-translate-y-0.5 transition"
@@ -1190,9 +1058,7 @@ function Dashboard() {
                 👧
               </div>
 
-              <p className="font-bold text-[#30435b]">
-                Add Child
-              </p>
+              <p className="font-bold text-[#30435b]">Add Child</p>
 
               <p className="text-sm text-gray-400 mt-1">
                 Register a new student
@@ -1211,9 +1077,7 @@ function Dashboard() {
                 👩‍🏫
               </div>
 
-              <p className="font-bold text-[#30435b]">
-                Add Teacher
-              </p>
+              <p className="font-bold text-[#30435b]">Add Teacher</p>
 
               <p className="text-sm text-gray-400 mt-1">
                 Create a teacher account
@@ -1232,9 +1096,7 @@ function Dashboard() {
                 👨‍👩‍👧
               </div>
 
-              <p className="font-bold text-[#30435b]">
-                Add Parent
-              </p>
+              <p className="font-bold text-[#30435b]">Add Parent</p>
 
               <p className="text-sm text-gray-400 mt-1">
                 Create a parent account
@@ -1253,9 +1115,7 @@ function Dashboard() {
                 🏫
               </div>
 
-              <p className="font-bold text-[#30435b]">
-                Create Class
-              </p>
+              <p className="font-bold text-[#30435b]">Create Class</p>
 
               <p className="text-sm text-gray-400 mt-1">
                 Set up a new classroom
@@ -1265,10 +1125,8 @@ function Dashboard() {
                 Get started →
               </span>
             </Link>
-
           </div>
         </section>
-
       </div>
     </div>
   );

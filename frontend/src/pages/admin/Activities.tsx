@@ -134,7 +134,7 @@ export default function Activities() {
   ).length;
 
   return (
-    <div className="p-6">
+    <div className="w-full space-y-6">
       {/* Header */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-6">
         <div>

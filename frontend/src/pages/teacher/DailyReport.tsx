@@ -516,7 +516,7 @@ export default function DailyReport() {
   const reportId = params.get("id");
   const date = params.get("date") || new Date().toISOString().split("T")[0];
 
-  const [children, setChildren] = useState<Child[]>([]);
+  const [, setChildren] = useState<Child[]>([]);
   const [activities, setActivities] = useState<Activity[]>([]);
 
   const [child, setChild] = useState<Child | null>(null);

@@ -1,4 +1,5 @@
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import type { FormEvent } from "react";
+import { useEffect, useMemo, useState } from "react";
 import api from "../../services/api";
 
 interface Parent {
@@ -204,9 +205,9 @@ function Parents() {
         form.children.map(Number)
       );
 
-      const currentChildren = children.filter((child) =>
-        child.parents.includes(parentId)
-      );
+      // const currentChildren = children.filter((child) =>
+      //   child.parents.includes(parentId)
+      // );
 
       for (const child of children) {
         const currentlyAssigned =
@@ -258,26 +259,27 @@ function Parents() {
     }
   };
 
-  const toggleStatus = async (parent: Parent) => {
-    try {
-      await api.patch(
-        `/parents/${parent.id}/`,
-        {
-          user: parent.user,
-        }
-      );
+  // const toggleStatus = async (parent: Parent) => {
+  //   try {
+  //     await api.patch(
+  //       `/parents/${parent.id}/`,
+  //       {
+  //         user: parent.user,
+  //       }
+  //     );
 
-      setError(
-        "Parent account status management will be added with the user-account endpoint."
-      );
-    } catch (err) {
-      console.error(err);
-      setError("Failed to update parent.");
-    }
-  };
+  //     setError(
+  //       "Parent account status management will be added with the user-account endpoint."
+  //     );
+  //   } catch (err) {
+  //     console.error(err);
+  //     setError("Failed to update parent.");
+  //   }
+  // };
 
   return (
-    <div className="min-h-screen p-8">
+    // <div className="min-h-screen p-8">
+    <div className="w-full space-y-6">
 
       {/* Header */}
 

@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 export const pageClass = "min-h-screen bg-[#fff8fb] p-5 md:p-7 xl:p-8";
 export const maxClass = "max-w-7xl mx-auto";
