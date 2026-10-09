@@ -2643,7 +2643,7 @@
    FAQ
 ========================================================= */
 
-.lotus-page .faq-section {
+/* .lotus-page .faq-section {
   padding: 110px 0;
 
   background: white;
@@ -2746,6 +2746,172 @@
 
 .lotus-page .faq-item.active .faq-answer p {
   padding-top: 12px;
+} */
+
+/* =========================================================
+   FAQ
+========================================================= */
+
+.lotus-page .faq-section {
+  padding: 110px 0;
+  background: #ffffff;
+}
+
+.lotus-page .faq-container {
+  width: min(850px, 100%);
+  margin: 0 auto;
+}
+
+/* FAQ card */
+.lotus-page .faq-item {
+  width: 100%;
+  border: 1px solid rgba(44, 62, 80, 0.07);
+  background: var(--cream);
+  border-radius: 17px;
+  margin-bottom: 12px;
+  padding: 18px 21px;
+  text-align: left;
+
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.lotus-page .faq-item:hover,
+.lotus-page .faq-item.active {
+  border-color: rgba(233, 30, 99, 0.2);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Clickable question */
+.lotus-page .faq-question {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--dark);
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+
+  -webkit-tap-highlight-color: transparent;
+}
+
+.lotus-page .faq-question:focus-visible {
+  outline: 2px solid var(--lotus-pink);
+  outline-offset: 5px;
+  border-radius: 4px;
+}
+
+.lotus-page .faq-question > span:first-child {
+  font-family: "Quicksand", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--dark);
+}
+
+/* Plus / minus icon */
+.lotus-page .faq-icon {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+  background: #ffffff;
+  color: var(--lotus-pink);
+  font-size: 1.1rem;
+  line-height: 1;
+
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+
+  transition: background-color 180ms ease;
+}
+
+.lotus-page .faq-item.active .faq-icon {
+  background: #fff0f6;
+}
+
+/* Answer animation */
+.lotus-page .faq-answer {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+
+  transition:
+    grid-template-rows 220ms ease,
+    opacity 160ms ease;
+}
+
+/* The inner content must be allowed to shrink */
+.lotus-page .faq-answer p {
+  min-height: 0;
+  overflow: hidden;
+
+  margin: 0;
+  padding-top: 0;
+
+  color: var(--light-text);
+  font-size: 0.85rem;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+
+  transition: padding-top 220ms ease;
+}
+
+/* Open answer */
+.lotus-page .faq-item.active .faq-answer {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.lotus-page .faq-item.active .faq-answer p {
+  padding-top: 12px;
+}
+
+/* Tablet and mobile */
+@media (max-width: 640px) {
+  .lotus-page .faq-section {
+    padding: 70px 0;
+  }
+
+  .lotus-page .faq-item {
+    padding: 16px;
+    border-radius: 14px;
+    margin-bottom: 10px;
+  }
+
+  .lotus-page .faq-question {
+    gap: 12px;
+  }
+
+  .lotus-page .faq-question > span:first-child {
+    font-size: 0.88rem;
+  }
+
+  .lotus-page .faq-answer p {
+    font-size: 0.82rem;
+    line-height: 1.75;
+  }
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .lotus-page .faq-item,
+  .lotus-page .faq-icon,
+  .lotus-page .faq-answer,
+  .lotus-page .faq-answer p {
+    transition: none;
+  }
 }
 
 /* =========================================================

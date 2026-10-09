@@ -201,7 +201,7 @@ const testimonials = [
   {
     name: "Riya Sharma",
     branch: "Charali",
-    initial: "S",
+    initial: "R",
     text: "The teachers are caring and genuinely interested in the children's development. Our child looks forward to going to school every day.",
   },
   {
@@ -1068,7 +1068,7 @@ function LandingPage() {
       </section>
 
       {/* ================= FAQ ================= */}
-      <section className="faq-section">
+      {/* <section className="faq-section">
         <div className="section-container">
           <div className="section-heading reveal">
             <span className="section-eyebrow">Questions?</span>
@@ -1100,6 +1100,54 @@ function LandingPage() {
                     <p>{faq.answer}</p>
                   </div>
                 </button>
+              );
+            })}
+          </div>
+        </div>
+      </section> */}
+
+      {/* ================= FAQ ================= */}
+      <section className="faq-section">
+        <div className="section-container">
+          <div className="section-heading reveal">
+            <span className="section-eyebrow">Questions?</span>
+
+            <h2>
+              We've got <span>answers.</span>
+            </h2>
+
+            <p>
+              Everything parents usually want to know before joining the Lotus
+              family.
+            </p>
+          </div>
+
+          <div className="faq-container">
+            {faqs.map((faq, index) => {
+              const active = activeFaq === index;
+
+              return (
+                <div
+                  className={`faq-item ${active ? "active" : ""}`}
+                  key={faq.question}
+                >
+                  <button
+                    type="button"
+                    className="faq-question"
+                    aria-expanded={active}
+                    onClick={() => setActiveFaq(active ? null : index)}
+                  >
+                    <span>{faq.question}</span>
+
+                    <span className="faq-icon" aria-hidden="true">
+                      {active ? "−" : "+"}
+                    </span>
+                  </button>
+
+                  <div className="faq-answer">
+                    <p>{faq.answer}</p>
+                  </div>
+                </div>
               );
             })}
           </div>
