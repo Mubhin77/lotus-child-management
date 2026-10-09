@@ -1,13 +1,29 @@
 import { useEffect, useState } from "react";
 import "./LandingPage.css";
 import logo from "../assets/logo.png";
+// import hero1 from "../assets/image1.jpg";
+import hero2 from "../assets/image2.jpg";
+import hero3 from "../assets/image3.jpg";
+import hero4 from "../assets/image4.jpg";
+import philosophy from "../assets/image5.jpg";
+import hero5 from "../assets/image6.jpg";
+import hero6 from "../assets/image7.jpg";
+import hero8 from "../assets/image8.jpg";
+import hero7 from "../assets/image9.jpg";
+import founder from "../assets/founder.png";
+
 const images = {
   logo: logo,
-  hero1: "/images/logo.png",
-  hero2: "/images/ll.jpg",
-  hero3: "/images/sss.jpg",
-  hero4: "/images/lotuss.jpg",
-  philosophy: "/images/philosophy.jpeg",
+  //   hero1: hero1,
+  hero2: hero4,
+  hero3: hero3,
+  hero4: hero2,
+  hero5: hero5,
+  hero6: hero6,
+  hero7: hero7,
+  hero8: hero8,
+  philosophy: philosophy,
+  founder: founder,
 };
 
 const rotatingWords = [
@@ -121,7 +137,7 @@ const galleryItems = [
     title: "Learning Through Experience",
   },
   {
-    image: images.hero3,
+    image: images.hero8,
     title: "Creative Learning",
   },
   {
@@ -129,15 +145,15 @@ const galleryItems = [
     title: "Happy Childhood",
   },
   {
-    image: images.philosophy,
+    image: images.hero7,
     title: "Our Montessori Environment",
   },
   {
-    image: images.hero2,
+    image: images.hero5,
     title: "Exploration & Discovery",
   },
   {
-    image: images.hero4,
+    image: images.hero6,
     title: "Growing Together",
   },
 ];
@@ -632,7 +648,7 @@ function LandingPage() {
             <div className="founder-decoration">“</div>
 
             <div className="founder-avatar">
-              <span>MK</span>
+              <span>M.K</span>
             </div>
 
             <div className="founder-content">
@@ -1119,7 +1135,7 @@ function LandingPage() {
                 <span>✉️</span>
                 <div>
                   <strong>Email</strong>
-                  <p>Contact Lotus Montessori</p>
+                  <p>lotuspreschoolandchildcare@gmail.com</p>
                 </div>
               </div>
 
@@ -1127,19 +1143,33 @@ function LandingPage() {
                 <span>🕘</span>
                 <div>
                   <strong>School Hours</strong>
-                  <p>Sunday – Friday • 9:00 AM – 4:00 PM</p>
+                  <p>Monday – Friday • 9:00 AM – 4:00 PM</p>
+                </div>
+              </div>
+
+              <div className="contact-detail">
+                <span>📞</span>
+                <div>
+                  <strong>Phone</strong>
+                  <p>9816160081 / 9817963282</p>
                 </div>
               </div>
             </div>
 
             <div className="social-links">
-              <a href="#" aria-label="Facebook">
+              <a
+                href="https://www.facebook.com/profile.php?id=100057215059097"
+                aria-label="Facebook"
+              >
                 f
               </a>
               <a href="#" aria-label="Instagram">
                 ◎
               </a>
-              <a href="#" aria-label="YouTube">
+              <a
+                href="https://www.tiktok.com/@lotus.preschool.o"
+                aria-label="Tiktok"
+              >
                 ▶
               </a>
             </div>
@@ -1213,9 +1243,11 @@ function LandingPage() {
               </p>
 
               <div className="footer-socials">
-                <a href="#">f</a>
+                <a href="https://www.facebook.com/profile.php?id=100057215059097">
+                  f
+                </a>
                 <a href="#">◎</a>
-                <a href="#">▶</a>
+                <a href="https://www.tiktok.com/@lotus.preschool.o">▶</a>
               </div>
             </div>
 
